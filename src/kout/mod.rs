@@ -9,12 +9,10 @@ impl Kout {
         let vgaBuffer = 0xb8000 as *mut u8;
         match byte {
             b'\n' => self.newLine(),
-            _ => {
-                unsafe {
-                    *vgaBuffer.offset(self.columnPosition as isize * 2) = byte;
-                    *vgaBuffer.offset(self.columnPosition as isize * 2 + 1) = 0x0f;
-                }
-            }
+            _ => unsafe {
+                *vgaBuffer.offset(self.columnPosition as isize * 2) = byte;
+                *vgaBuffer.offset(self.columnPosition as isize * 2 + 1) = 0x0f;
+            },
         }
         self.columnPosition += 1;
     }
@@ -23,7 +21,7 @@ impl Kout {
         for byte in string.bytes() {
             match byte {
                 0x20..=0x7e | b'\n' => self.writeByte(byte),
-                _ => self.writeByte(0xfe)
+                _ => self.writeByte(0xfe),
             }
         }
     }
@@ -33,4 +31,3 @@ impl Kout {
         }
     }
 }
-
